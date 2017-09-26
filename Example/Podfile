@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'MaterialTabBar_Example' do
+  pod 'MaterialTabBar', :path => '../'
+
+  target 'MaterialTabBar_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

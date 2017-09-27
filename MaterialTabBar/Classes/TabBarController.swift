@@ -32,6 +32,9 @@ open class TabBarController: UIViewController {
     public weak var tabBar: TabBar? {
         return self.tabBarView
     }
+    public var scrollView: UIScrollView? {
+        return self.pageController.scrollView
+    }
     public private(set) var viewControllers: [UIViewController] = []
     public var tabBarPosition: TabBarPosition = .top {
         didSet {

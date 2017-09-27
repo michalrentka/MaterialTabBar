@@ -1,0 +1,16 @@
+PODS:
+  - MaterialTabBar (0.1.0)
+
+DEPENDENCIES:
+  - MaterialTabBar (from `../`)
+
+EXTERNAL SOURCES:
+  MaterialTabBar:
+    :path: ../
+
+SPEC CHECKSUMS:
+  MaterialTabBar: 93f1c879958819f29af972825e0cd88756ee2f6d
+
+PODFILE CHECKSUM: b34c75261357f9eeddf48d1f5b4c62651aa1ac61
+
+COCOAPODS: 1.3.1

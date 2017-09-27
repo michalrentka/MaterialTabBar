@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  MaterialTabBar
 //
-//  Created by haluzak on 09/26/2017.
-//  Copyright (c) 2017 haluzak. All rights reserved.
+//  Created by Michal Rentka on 09/26/2017.
+//  Copyright (c) 2017 Michal Rentka. All rights reserved.
 //
 
 import UIKit

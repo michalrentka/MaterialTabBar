@@ -1,0 +1,6 @@
+framework module MaterialTabBar {
+  umbrella header "MaterialTabBar-umbrella.h"
+
+  export *
+  module * { export * }
+}

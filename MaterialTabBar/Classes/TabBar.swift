@@ -23,9 +23,11 @@ public protocol TabBar: class {
     var selectionLineHeight: CGFloat { get set }
     var selectionLineBackgroundColor: UIColor { get set }
     var selectionLinePosition: TabBarLinePosition { get set }
+    var buttonFont: UIFont { get set }
     var buttonTextColor: UIColor { get set }
     var buttonSelectionColor: UIColor? { get set }
     var buttonHighlightColor: UIColor? { get set }
+    var backgroundColor: UIColor? { get set }
 }
 
 /// Type which specifies the layout of tab bar.
@@ -140,6 +142,7 @@ final class TabBarView: UIScrollView, TabBar {
         didSet {
             self.selectedIndex = 0
             let data = self.createContentViews(from: self.items,
+                                               font: self.buttonFont,
                                                textColor: self.buttonTextColor,
                                                highlightColor: self.buttonHighlightColor,
                                                selectionColor: self.buttonSelectionColor,
@@ -194,6 +197,11 @@ final class TabBarView: UIScrollView, TabBar {
             self.lineTop?.isActive = self.selectionLinePosition == .top
             self.lineBottom?.isActive = self.selectionLinePosition == .bottom
             self.selectionLine?.layoutIfNeeded()
+        }
+    }
+    var buttonFont: UIFont = .systemFont(ofSize: 14.0) {
+        didSet {
+            self.buttons.forEach { $0.titleLabel?.font = self.buttonFont }
         }
     }
     var buttonTextColor: UIColor = .black {
@@ -349,7 +357,7 @@ final class TabBarView: UIScrollView, TabBar {
     
     // MARK: - View creation
     
-    private func createContentViews(from items: [TabBarItem], textColor: UIColor,
+    private func createContentViews(from items: [TabBarItem], font: UIFont, textColor: UIColor,
                                     highlightColor: UIColor?, selectionColor: UIColor?,
                                     with type: TabBarType, delegate: TabBarDelegate?) -> ContentViews {
         let view = UIView()
@@ -358,6 +366,7 @@ final class TabBarView: UIScrollView, TabBar {
         // Generate buttons for each item
         items.enumerated().forEach { data in
             let button = self.createButton(from: data.element,
+                                           font: font,
                                            textColor: textColor,
                                            highlightColor: highlightColor,
                                            selectionColor: selectionColor,
@@ -405,12 +414,13 @@ final class TabBarView: UIScrollView, TabBar {
         return (view, buttonWidths)
     }
     
-    private func createButton(from item: TabBarItem, textColor: UIColor, highlightColor: UIColor?,
-                              selectionColor: UIColor?, index: Int) -> UIButton {
+    private func createButton(from item: TabBarItem, font: UIFont, textColor: UIColor,
+                              highlightColor: UIColor?, selectionColor: UIColor?, index: Int) -> UIButton {
         let button = UIButton()
         let selector = #selector(TabBarView.buttonTapped(_:))
         button.addTarget(self, action: selector, for: .touchUpInside)
         button.tag = index
+        button.titleLabel?.font = font
         button.contentEdgeInsets = TabBarView.defaultButtonInsets
         button.setTitle(item.title, for: .normal)
         button.setImage(item.image, for: .normal)

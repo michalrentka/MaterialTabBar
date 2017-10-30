@@ -21,8 +21,10 @@ public protocol TabBar: class {
     var type: TabBarType { get set }
     var selectionType: TabBarSelection { get set }
     var selectionLineHeight: CGFloat { get set }
+    var selectionLineWidthMultiplier: CGFloat { get set }
     var selectionLineBackgroundColor: UIColor { get set }
     var selectionLinePosition: TabBarLinePosition { get set }
+    var selectionLineStartsAtButtonInset: Bool { get set }
     var buttonFont: UIFont { get set }
     var buttonTextColor: UIColor { get set }
     var buttonSelectionColor: UIColor? { get set }
@@ -187,6 +189,11 @@ final class TabBarView: UIScrollView, TabBar {
             self.selectionLine?.layoutIfNeeded()
         }
     }
+    var selectionLineWidthMultiplier: CGFloat = 1.0 {
+        didSet {
+            self.resetLineAndScrollPosition()
+        }
+    }
     var selectionLineBackgroundColor: UIColor = .black {
         didSet {
             self.selectionLine?.backgroundColor = self.selectionLineBackgroundColor
@@ -197,6 +204,11 @@ final class TabBarView: UIScrollView, TabBar {
             self.lineTop?.isActive = self.selectionLinePosition == .top
             self.lineBottom?.isActive = self.selectionLinePosition == .bottom
             self.selectionLine?.layoutIfNeeded()
+        }
+    }
+    var selectionLineStartsAtButtonInset: Bool = false {
+        didSet {
+            self.resetLineAndScrollPosition()
         }
     }
     var buttonFont: UIFont = .systemFont(ofSize: 14.0) {
@@ -245,8 +257,14 @@ final class TabBarView: UIScrollView, TabBar {
         guard let button = self.button(at: self.selectedIndex) else { return }
         
         if self.selectionType == .line || self.selectionType == .highlightAndLine {
-            self.lineLeft?.constant = round(button.frame.minX)
-            self.lineWidth?.constant = round(button.frame.width)
+            var minX = button.frame.minX
+            var width = button.frame.width
+            if self.selectionLineStartsAtButtonInset {
+                minX += button.contentEdgeInsets.left
+                width -= button.contentEdgeInsets.left
+            }
+            self.lineLeft?.constant = round(minX)
+            self.lineWidth?.constant = round(width * self.selectionLineWidthMultiplier)
             self.selectionLine?.layoutIfNeeded()
         }
 
@@ -293,11 +311,15 @@ final class TabBarView: UIScrollView, TabBar {
         let oldButton = self.buttons[previousIndex]
         let newButton = self.buttons[index]
 
-        let x = oldButton.frame.minX + ((newButton.frame.minX - oldButton.frame.minX) * progress)
-        let width = oldButton.frame.width + ((newButton.frame.width - oldButton.frame.width) * progress)
+        var x = oldButton.frame.minX + ((newButton.frame.minX - oldButton.frame.minX) * progress)
+        var width = oldButton.frame.width + ((newButton.frame.width - oldButton.frame.width) * progress)
+        if self.selectionLineStartsAtButtonInset {
+            x += newButton.contentEdgeInsets.left
+            width -= newButton.contentEdgeInsets.left
+        }
 
         self.lineLeft?.constant = round(x)
-        self.lineWidth?.constant = round(width)
+        self.lineWidth?.constant = round(width * self.selectionLineWidthMultiplier)
         self.layoutIfNeeded()
     }
     

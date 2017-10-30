@@ -35,6 +35,17 @@ open class TabBarController: UIViewController {
     public var scrollView: UIScrollView? {
         return self.pageController.scrollView
     }
+    public var headerView: UIView? {
+        didSet {
+            guard let containerView = self.headerViewContainer else { return }
+            oldValue?.removeFromSuperview()
+            self.headerViewHeightConstraint?.isActive = self.headerView == nil
+            if let headerView = self.headerView {
+                self.addHeaderView(headerView, to: containerView)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
     public private(set) var viewControllers: [UIViewController] = []
     public var tabBarPosition: TabBarPosition = .top {
         didSet {
@@ -56,11 +67,15 @@ open class TabBarController: UIViewController {
     }
     private weak var tabBarView: TabBarView?
     private weak var pageController: UIPageViewController!
+    private weak var headerViewContainer: UIView?
     
     // MARK: - Constraints
     
     private var tabBarTopConstraint: NSLayoutConstraint?
     private var tabBarBottomConstraint: NSLayoutConstraint?
+    private var headerViewTopConstraint: NSLayoutConstraint?
+    private var headerViewBottomConstraint: NSLayoutConstraint?
+    private var headerViewHeightConstraint: NSLayoutConstraint?
     private var contentViewTopConstraint: NSLayoutConstraint?
     private var contentViewBottomConstraint: NSLayoutConstraint?
     private var tabBarTopContentViewBottomConstraint: NSLayoutConstraint?
@@ -78,6 +93,7 @@ open class TabBarController: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        self.setupHeaderViewContainer()
         self.setupTabBar()
         self.setupPageViewController()
         self.setupAdditionalConstraints()
@@ -127,6 +143,15 @@ open class TabBarController: UIViewController {
         self.scrollIndexDifference = nil
         self.tabBarView?.didChangeParentContent(to: self.selectedIndex)
     }
+    
+    private func addHeaderView(_ headerView: UIView, to containerView: UIView) {
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(headerView)
+        headerView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        headerView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+        headerView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        headerView.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+    }
 
     // MARK: - Setups
     
@@ -134,6 +159,8 @@ open class TabBarController: UIViewController {
         let isTabBarOnTop = tabBarPosition == .top
         self.tabBarTopConstraint?.isActive = isTabBarOnTop
         self.tabBarBottomConstraint?.isActive = !isTabBarOnTop
+        self.headerViewTopConstraint?.isActive = isTabBarOnTop
+        self.headerViewBottomConstraint?.isActive = !isTabBarOnTop
         self.tabBarTopContentViewBottomConstraint?.isActive = !isTabBarOnTop
         self.tabBarBottomContentViewTopConstraint?.isActive = isTabBarOnTop
         self.contentViewTopConstraint?.isActive = !isTabBarOnTop
@@ -149,15 +176,6 @@ open class TabBarController: UIViewController {
         self.view.addSubview(tabBar)
         self.tabBarView = tabBar
 
-        let layoutGuide: UILayoutGuide
-        if #available(iOS 11.0, *) {
-            layoutGuide = self.view.safeAreaLayoutGuide
-        } else {
-            layoutGuide = self.view.layoutMarginsGuide
-        }
-
-        self.tabBarTopConstraint = self.tabBarView?.topAnchor.constraint(equalTo: layoutGuide.topAnchor)
-        self.tabBarBottomConstraint = self.tabBarView?.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor)
         self.tabBarView?.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
         self.tabBarView?.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
     }
@@ -187,10 +205,40 @@ open class TabBarController: UIViewController {
         self.contentViewBottomConstraint = self.pageController.view.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor)
     }
     
+    private func setupHeaderViewContainer() {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.backgroundColor = .clear
+        self.view.addSubview(containerView)
+        self.headerViewContainer = containerView
+        
+        let layoutGuide: UILayoutGuide
+        if #available(iOS 11.0, *) {
+            layoutGuide = self.view.safeAreaLayoutGuide
+        } else {
+            layoutGuide = self.view.layoutMarginsGuide
+        }
+        
+        self.headerViewContainer?.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.headerViewContainer?.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.headerViewTopConstraint = self.headerViewContainer?.topAnchor.constraint(equalTo: layoutGuide.topAnchor)
+        self.headerViewBottomConstraint = self.headerViewContainer?.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor)
+        self.headerViewHeightConstraint = self.headerViewContainer?.heightAnchor.constraint(equalToConstant: 0.0)
+        self.headerViewHeightConstraint?.isActive = self.headerView == nil
+        
+        if let headerView = self.headerView {
+            self.addHeaderView(headerView, to: containerView)
+        }
+    }
+    
     private func setupAdditionalConstraints() {
-        let view = self.pageController.view!
-        self.tabBarBottomContentViewTopConstraint = self.tabBarView?.bottomAnchor.constraint(equalTo: view.topAnchor)
-        self.tabBarTopContentViewBottomConstraint = self.tabBarView?.topAnchor.constraint(equalTo: view.bottomAnchor)
+        let contentView = self.pageController.view!
+        let headerView = self.headerViewContainer!
+        
+        self.tabBarTopConstraint = self.tabBarView?.topAnchor.constraint(equalTo: headerView.bottomAnchor)
+        self.tabBarBottomConstraint = self.tabBarView?.bottomAnchor.constraint(equalTo: headerView.topAnchor)
+        self.tabBarBottomContentViewTopConstraint = self.tabBarView?.bottomAnchor.constraint(equalTo: contentView.topAnchor)
+        self.tabBarTopContentViewBottomConstraint = self.tabBarView?.topAnchor.constraint(equalTo: contentView.bottomAnchor)
     }
 }
 

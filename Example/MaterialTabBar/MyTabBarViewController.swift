@@ -66,6 +66,22 @@ class MyTabBarViewController: TabBarController {
             self.tabBar?.selectionType = .highlightAndLine
             self.tabBar?.buttonTextColor = UIColor.gray.withAlphaComponent(0.5)
             self.tabBar?.buttonSelectionColor = .black
+        case .headerView:
+            items.append(contentsOf: [TabBarItem(title: "First"),
+                                      TabBarItem(title: "Second"),
+                                      TabBarItem(title: "Third")])
+            let headerView = UIView()
+            headerView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+            headerView.backgroundColor = .blue
+            self.headerView = headerView
+        case .lineCustomisation:
+            items.append(contentsOf: [TabBarItem(title: "Controller 1"),
+                                      TabBarItem(title: "View Controller 2"),
+                                      TabBarItem(title: "Ctrl 3"),
+                                      TabBarItem(title: "Controller 4"),
+                                      TabBarItem(title: "VC 5")])
+            self.tabBar?.selectionLineStartsAtButtonInset = true
+            self.tabBar?.selectionLineWidthMultiplier = 0.5
         }
         
         let controllers = items.map { ViewController(item: $0) }

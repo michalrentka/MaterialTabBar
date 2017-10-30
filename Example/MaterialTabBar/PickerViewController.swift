@@ -9,7 +9,9 @@
 import UIKit
 
 enum TabBarStyle {
-    case scrollable, normal, highlight, line, highlightAndLine, animatedType
+    case scrollable, normal, highlight, line,
+         highlightAndLine, animatedType, headerView,
+         lineCustomisation
     
     var title: String {
         switch self {
@@ -25,6 +27,10 @@ enum TabBarStyle {
             return "Customized highlight and line selection"
         case .animatedType:
             return "Tabbar type changed on orientation change"
+        case .headerView:
+            return "Tabbar with headerView"
+        case .lineCustomisation:
+            return "Tabbar selection line customisation"
         }
     }
 }
@@ -32,7 +38,8 @@ enum TabBarStyle {
 class PickerViewController: UIViewController {
     private let cellId = "PickerCell"
     private let styles: [TabBarStyle] = [.scrollable, .normal, .highlight, .line,
-                                         .highlightAndLine, .animatedType]
+                                         .highlightAndLine, .animatedType, .headerView,
+                                         .lineCustomisation]
     
     @IBOutlet private weak var tableView: UITableView?
     

@@ -65,9 +65,11 @@ open class TabBarController: UIViewController {
             self.showViewController(at: newValue, oldIndex: self.selectedIndex)
         }
     }
+    public var selectionChanged: TabBarSelectionChangedAction?
     private weak var tabBarView: TabBarView?
     private weak var pageController: UIPageViewController!
     private weak var headerViewContainer: UIView?
+    private var transitioningController: UIViewController?
     
     // MARK: - Constraints
     
@@ -128,7 +130,11 @@ open class TabBarController: UIViewController {
         }
         self.willChangeContent(to: index)
         self.pageController.setViewControllers([self.viewControllers[index]], direction: direction,
-                                               animated: animated, completion: nil)
+                                               animated: animated, completion: { [weak self] completed in
+            if completed {
+                self?.selectionChanged?(index)
+            }
+        })
     }
     
     private func willChangeContent(to index: Int? = nil) {
@@ -183,6 +189,7 @@ open class TabBarController: UIViewController {
     private func setupPageViewController() {
         let controller = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         controller.dataSource = self
+        controller.delegate = self
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         controller.scrollView?.delegate = self
 
@@ -257,6 +264,25 @@ extension TabBarController: UIPageViewControllerDataSource {
             return nil
         }
         return self.viewControllers[index - 1]
+    }
+}
+
+extension TabBarController: UIPageViewControllerDelegate {
+    public func pageViewController(_ pageViewController: UIPageViewController,
+                            willTransitionTo pendingViewControllers: [UIViewController]) {
+        self.transitioningController = pendingViewControllers.last
+    }
+    
+    public func pageViewController(_ pageViewController: UIPageViewController,
+                            didFinishAnimating finished: Bool,
+                            previousViewControllers: [UIViewController],
+                            transitionCompleted completed: Bool) {
+        guard completed,
+              let viewController = self.transitioningController,
+              let index = self.viewControllers.index(of: viewController) else {
+            return
+        }
+        self.selectionChanged?(index)
     }
 }
 

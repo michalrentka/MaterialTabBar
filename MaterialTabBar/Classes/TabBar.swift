@@ -8,7 +8,7 @@
 
 import UIKit
 
-typealias TabBarSelectionChangedAction = (_ index: Int) -> Void
+public typealias TabBarSelectionChangedAction = (_ index: Int) -> Void
 private typealias ContentViews = (contentView: UIView, buttonWidths: [NSLayoutConstraint])
 
 public protocol TabBarDelegate: class {

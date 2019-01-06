@@ -124,7 +124,7 @@ final class TabBarView: UIScrollView, TabBar {
     /// All visible buttons, used for configuring font, color, etc.
     private var buttons: [UIButton] {
         guard let contentView = self.contentView else { return [] }
-        return contentView.subviews.flatMap { $0 as? UIButton }
+        return contentView.subviews.compactMap { $0 as? UIButton }
     }
 
     // MARK: -  Constraints
@@ -374,7 +374,7 @@ final class TabBarView: UIScrollView, TabBar {
     // MARK: - Autolayout
     
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIViewNoIntrinsicMetric, height: TabBarView.height)
+        return CGSize(width: UIView.noIntrinsicMetric, height: TabBarView.height)
     }
     
     // MARK: - View creation

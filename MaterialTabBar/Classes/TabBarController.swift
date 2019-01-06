@@ -124,7 +124,7 @@ open class TabBarController: UIViewController {
         guard index != oldIndex && index >= 0 && index < self.viewControllers.count else {
             return
         }
-        var direction: UIPageViewControllerNavigationDirection = .forward
+        var direction: UIPageViewController.NavigationDirection = .forward
         if let oldIndex = oldIndex, index < oldIndex {
             direction = .reverse
         }
@@ -193,10 +193,10 @@ open class TabBarController: UIViewController {
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         controller.scrollView?.delegate = self
 
-        controller.willMove(toParentViewController: self)
-        self.addChildViewController(controller)
+        controller.willMove(toParent: self)
+        self.addChild(controller)
         self.view.addSubview(controller.view)
-        controller.didMove(toParentViewController: self)
+        controller.didMove(toParent: self)
         self.pageController = controller
 
         let layoutGuide: UILayoutGuide

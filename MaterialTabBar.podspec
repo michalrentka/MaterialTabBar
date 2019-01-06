@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MaterialTabBar'
-  s.version          = '0.2.1'
+  s.version          = '0.2.2'
   s.summary          = 'A tab bar controller based on Material design.'
 
   s.description      = <<-DESC

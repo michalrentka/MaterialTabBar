@@ -58,7 +58,7 @@ open class TabBarController: UIViewController {
     public var selectedIndex: Int {
         get {
             let controller = self.pageController.viewControllers?.first
-            return controller.flatMap { self.viewControllers.index(of: $0) } ?? 0
+            return controller.flatMap { self.viewControllers.firstIndex(of: $0) } ?? 0
         }
 
         set {
@@ -252,7 +252,7 @@ open class TabBarController: UIViewController {
 extension TabBarController: UIPageViewControllerDataSource {
     public func pageViewController(_ pageViewController: UIPageViewController,
                                    viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let index = self.viewControllers.index(of: viewController), (index + 1) < self.viewControllers.count else {
+        guard let index = self.viewControllers.firstIndex(of: viewController), (index + 1) < self.viewControllers.count else {
             return nil
         }
         return self.viewControllers[index + 1]
@@ -260,7 +260,7 @@ extension TabBarController: UIPageViewControllerDataSource {
     
     public func pageViewController(_ pageViewController: UIPageViewController,
                                    viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let index = self.viewControllers.index(of: viewController), (index - 1) >= 0 else {
+        guard let index = self.viewControllers.firstIndex(of: viewController), (index - 1) >= 0 else {
             return nil
         }
         return self.viewControllers[index - 1]
@@ -279,7 +279,7 @@ extension TabBarController: UIPageViewControllerDelegate {
                             transitionCompleted completed: Bool) {
         guard completed,
               let viewController = self.transitioningController,
-              let index = self.viewControllers.index(of: viewController) else {
+              let index = self.viewControllers.firstIndex(of: viewController) else {
             return
         }
         self.selectionChanged?(index)

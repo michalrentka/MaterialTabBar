@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MaterialTabBar'
-  s.version          = '0.2.2'
+  s.version          = '0.2.3'
   s.summary          = 'A tab bar controller based on Material design.'
 
   s.description      = <<-DESC
@@ -20,7 +20,9 @@ Simple and customizable tab bar controller which resembles the Material tab bar 
   s.author           = { 'Michal Rentka' => 'michalrentka@gmail.com' }
   s.source           = { :git => 'https://github.com/haluzak/MaterialTabBar.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'MaterialTabBar/Classes/**/*'
+
+  s.swift_versions = '5.0'
 end
